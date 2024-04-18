@@ -5,8 +5,8 @@
     "description": "C TWO Universal Queues will allow you to track all the value from your business processes composed of multiple technologies",
     "version": "1.0"
   },
-  "host": "demo2.rpasupervisor.com",
-  "basePath": "/Demo2/CTWO.Server/api/",
+  "host": "",
+  "basePath": "",
   "schemes": [
     "https"
   ],
