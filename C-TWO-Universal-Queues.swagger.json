@@ -1,0 +1,1002 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "C TWO Universal Queues Connector",
+    "description": "C TWO Universal Queues will allow you to track all the value from your business processes composed of multiple technologies",
+    "version": "1.0"
+  },
+  "host": "",
+  "basePath": "",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/universalqueues/v1/queues": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "default",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "id"
+                  },
+                  "deleted": {
+                    "type": "boolean",
+                    "description": "deleted"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "name"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "description"
+                  },
+                  "itemKeyPolicy": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "itemKeyPolicy"
+                  },
+                  "itemStatusPolicy": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "itemStatusPolicy"
+                  },
+                  "itemExceptionReasonPolicy": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "itemExceptionReasonPolicy"
+                  },
+                  "visible": {
+                    "type": "boolean",
+                    "description": "visible"
+                  },
+                  "includeInReports": {
+                    "type": "boolean",
+                    "description": "includeInReports"
+                  },
+                  "created": {
+                    "type": "string",
+                    "description": "created"
+                  },
+                  "updated": {
+                    "type": "string",
+                    "description": "updated"
+                  },
+                  "deletedTime": {
+                    "type": "string",
+                    "description": "deletedTime"
+                  },
+                  "divisionId": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "divisionId"
+                  },
+                  "type": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "type"
+                  },
+                  "reference": {
+                    "type": "string",
+                    "description": "reference"
+                  },
+                  "states": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "id"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "name"
+                        },
+                        "description": {
+                          "type": "string",
+                          "description": "description"
+                        },
+                        "tagfilter": {
+                          "type": "string",
+                          "description": "tagfilter"
+                        },
+                        "state": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "state"
+                        },
+                        "timeSavedPerItem": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "timeSavedPerItem"
+                        },
+                        "includeInReports": {
+                          "type": "boolean",
+                          "description": "includeInReports"
+                        },
+                        "responseTimeCalculationBasis": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "responseTimeCalculationBasis"
+                        }
+                      }
+                    },
+                    "description": "states"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get Queue Information",
+        "description": "Get Queue Information",
+        "operationId": "GetQueues",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "reference",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "x-ms-visibility": "important"
+          },
+          {
+            "name": "stateName",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "x-ms-visibility": "important"
+          },
+          {
+            "name": "deleted",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          }
+        ]
+      }
+    },
+    "/universalqueues/v1/items/lock/{reference}": {
+      "patch": {
+        "summary": "Lock next unlocked item from queue reference",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "reference",
+            "description": "Specific queue reference to be locked.",
+            "required": true,
+            "type": "string",
+            "x-ms-dynamic-values": {
+              "operationId": "GetQueues",
+              "value-path": "reference",
+              "value-title": "name"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sessionId",
+            "description": "",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "device",
+            "description": "",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "user",
+            "description": "",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "automationVendor",
+            "description": "",
+            "type": "string",
+            "format": "int32",
+            "enum": [
+              "Unknown",
+              "BluePrism",
+              "UIPathAdapter",
+              "AutomationAnywhere",
+              "UIPathCloudAdapter"
+            ]
+          },
+          {
+            "in": "query",
+            "name": "test",
+            "description": "Allows to work with production (by default) or non-production items",
+            "type": "boolean",
+            "default": false
+          },
+          {
+            "in": "query",
+            "name": "stateName",
+            "description": "",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "stateId",
+            "description": "",
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "description": "Lock next unlocked item from queue reference",
+        "operationId": "LockNextItemFromQueueReference",
+        "x-ms-visibility": "important"
+      }
+    },
+    "/universalqueues/v1/items/{queueItemId}/unlock": {
+      "patch": {
+        "summary": "Unlock a specific queue item ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "queueItemId",
+            "description": "Specific queue item id to be unlocked.",
+            "required": true,
+            "type": "integer",
+            "format": "int32",
+            "maximum": 2147483647,
+            "minimum": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "id"
+                },
+                "vendorId": {
+                  "type": "string",
+                  "description": "vendorId"
+                },
+                "itemKey": {
+                  "type": "string",
+                  "description": "itemKey"
+                },
+                "status": {
+                  "type": "string",
+                  "description": "status"
+                },
+                "created": {
+                  "type": "string",
+                  "description": "created"
+                },
+                "localCreated": {
+                  "type": "string",
+                  "description": "localCreated"
+                },
+                "createdByVendorSessionId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "createdByVendorSessionId"
+                },
+                "concluded": {
+                  "type": "string",
+                  "description": "concluded"
+                },
+                "localConcluded": {
+                  "type": "string",
+                  "description": "localConcluded"
+                },
+                "queueId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "queueId"
+                },
+                "deferredUntil": {
+                  "type": "string",
+                  "description": "deferredUntil"
+                },
+                "localDeferredUntil": {
+                  "type": "string",
+                  "description": "localDeferredUntil"
+                },
+                "state": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "state"
+                },
+                "workflowId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "workflowId"
+                },
+                "legacy": {
+                  "type": "boolean",
+                  "description": "legacy"
+                },
+                "locked": {
+                  "type": "boolean",
+                  "description": "locked"
+                },
+                "test": {
+                  "type": "boolean",
+                  "description": "test"
+                },
+                "queueItemData": {
+                  "type": "string",
+                  "description": "queueItemData"
+                }
+              }
+            }
+          }
+        },
+        "description": "Unlock a specific queue item ID",
+        "operationId": "UnlockQueueItemID"
+      }
+    },
+    "/universalqueues/v1/items/{queueItemId}/tag": {
+      "delete": {
+        "summary": "Remove a tag to given queue item",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "queueItemId",
+            "description": "Queue item id",
+            "required": true,
+            "type": "integer",
+            "format": "int32",
+            "maximum": 2147483647,
+            "minimum": 1
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tag deleted"
+          }
+        },
+        "description": "Remove a tag to given queue item",
+        "operationId": "UntagQueueItem"
+      },
+      "patch": {
+        "summary": "Add a tag to given queue item",
+        "description": "Add a tag to given queue item",
+        "parameters": [
+          {
+            "name": "queueItemId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "tags": {
+                  "type": "string",
+                  "description": "tags"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tag added"
+          }
+        },
+        "operationId": "TagQueueItem"
+      }
+    },
+    "/universalqueues/v1/items/{queueItemId}/log": {
+      "post": {
+        "summary": "Add a log message to given queue item",
+        "parameters": [
+          {
+            "name": "queueItemId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "message"
+                },
+                "level": {
+                  "type": "string",
+                  "description": "level",
+                  "title": "",
+                  "enum": [
+                    "Information",
+                    "Warning",
+                    "Exception"
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Log added"
+          }
+        },
+        "description": "Add a log message to given queue item",
+        "operationId": "AddLogToQueueItem"
+      }
+    },
+    "/universalqueues/v1/items/{queueItemId}/retry": {
+      "patch": {
+        "summary": "Retry queue item",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "queueItemId",
+            "description": "Specific queue item id to retry.",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "description": "Retry queue item",
+        "operationId": "RetryQueueItem"
+      }
+    },
+    "/universalqueues/v1/items": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "id"
+                  },
+                  "itemKey": {
+                    "type": "string",
+                    "description": "itemKey"
+                  },
+                  "attempts": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "attempts"
+                  },
+                  "queue": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "id"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "name"
+                      }
+                    },
+                    "description": "queue"
+                  },
+                  "state": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "id"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "name"
+                      },
+                      "state": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "state"
+                      }
+                    },
+                    "description": "state"
+                  },
+                  "created": {
+                    "type": "string",
+                    "description": "created"
+                  },
+                  "concluded": {
+                    "type": "string",
+                    "description": "concluded"
+                  },
+                  "defer": {
+                    "type": "string",
+                    "description": "defer"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "id"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "name"
+                        }
+                      }
+                    },
+                    "description": "tags"
+                  },
+                  "itemData": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "id"
+                        },
+                        "itemData": {
+                          "type": "object",
+                          "properties": {
+                            "key": {
+                              "type": "string",
+                              "description": "key"
+                            }
+                          },
+                          "description": "itemData"
+                        }
+                      }
+                    },
+                    "description": "itemData"
+                  },
+                  "attachments": {
+                    "type": "array",
+                    "items": {},
+                    "description": "attachments"
+                  },
+                  "locked": {
+                    "type": "boolean",
+                    "description": "locked"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get queue items infromation",
+        "operationId": "GetItemInfo",
+        "description": "Get queue items infromation using custom filters",
+        "parameters": [
+          {
+            "name": "itemKey",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "attempts",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "deferredBefore",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "deferredAfter",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "createdBefore",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "createdAfter",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "concludedBefore",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "concludedAfter",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "stateEnteredTimeBefore",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "stateEnteredTimeAfter",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "slaBreach",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "states",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "queueItemStateIds",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "queueIds",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "includeItemData",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "orderByColumn",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "orderByDirection",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          }
+        ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "default",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "id"
+                },
+                "vendorId": {
+                  "type": "string",
+                  "description": "vendorId"
+                },
+                "itemKey": {
+                  "type": "string",
+                  "description": "itemKey"
+                },
+                "status": {
+                  "type": "string",
+                  "description": "status"
+                },
+                "created": {
+                  "type": "string",
+                  "description": "created"
+                },
+                "localCreated": {
+                  "type": "string",
+                  "description": "localCreated"
+                },
+                "createdByVendorSessionId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "createdByVendorSessionId"
+                },
+                "concluded": {
+                  "type": "string",
+                  "description": "concluded"
+                },
+                "localConcluded": {
+                  "type": "string",
+                  "description": "localConcluded"
+                },
+                "queueId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "queueId"
+                },
+                "deferredUntil": {
+                  "type": "string",
+                  "description": "deferredUntil"
+                },
+                "localDeferredUntil": {
+                  "type": "string",
+                  "description": "localDeferredUntil"
+                },
+                "state": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "state"
+                },
+                "workflowId": {
+                  "type": "string",
+                  "description": "workflowId"
+                },
+                "legacy": {
+                  "type": "boolean",
+                  "description": "legacy"
+                },
+                "locked": {
+                  "type": "boolean",
+                  "description": "locked"
+                },
+                "test": {
+                  "type": "boolean",
+                  "description": "test"
+                },
+                "queueItemData": {
+                  "type": "object",
+                  "properties": {
+                    "itemData": {
+                      "type": "string",
+                      "description": "itemData"
+                    },
+                    "created": {
+                      "type": "string",
+                      "description": "created"
+                    },
+                    "id": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "id"
+                    }
+                  },
+                  "description": "queueItemData"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Create Queue Item",
+        "description": "Create Queue Item",
+        "operationId": "CreateItem",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "reference": {
+                  "type": "string",
+                  "description": "reference",
+                  "title": "queueName",
+                  "x-ms-visibility": "important",
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetQueues",
+                    "value-path": "reference",
+                    "value-title": "name"
+                  }
+                },
+                "itemKey": {
+                  "type": "string",
+                  "description": "itemKey",
+                  "title": ""
+                },
+                "queueItemState": {
+                  "type": "string",
+                  "description": "queueItemState",
+                  "title": ""
+                },
+                "deferredUntil": {
+                  "type": "string",
+                  "description": "deferredUntil"
+                },
+                "itemData": {
+                  "type": "string",
+                  "description": "itemData"
+                },
+                "tags": {
+                  "type": "string",
+                  "description": "tags"
+                },
+                "production": {
+                  "type": "boolean",
+                  "description": "production"
+                },
+                "automationProvider": {
+                  "type": "string",
+                  "description": "automationProvider"
+                },
+                "user": {
+                  "type": "string",
+                  "description": "user"
+                },
+                "device": {
+                  "type": "string",
+                  "description": "device"
+                }
+              },
+              "required": [
+                "reference",
+                "queueItemState",
+                "itemKey"
+              ]
+            }
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/universalqueues/v1/items/{queueItemId}/SetState": {
+      "post": {
+        "responses": {
+          "default": {
+            "description": "default",
+            "schema": {}
+          }
+        },
+        "summary": "Set Queue Item State",
+        "description": "Set Queue Item State",
+        "operationId": "SetQueueItemState",
+        "x-ms-visibility": "important",
+        "parameters": [
+          {
+            "name": "queueItemId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "state": {
+                  "type": "string",
+                  "description": "state"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/universalqueues/v1/items/{queueItemId}/Data": {
+      "post": {
+        "summary": "Sets data for a given queue item",
+        "parameters": [
+          {
+            "name": "queueItemId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "string",
+                  "description": "data"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "Sets data for a given queue item",
+        "operationId": "SetQueueItemData"
+      }
+    }
+  },
+  "definitions": {},
+  "parameters": {},
+  "responses": {},
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization"
+    }
+  },
+  "security": [],
+  "tags": []
+}
