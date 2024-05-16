@@ -5,8 +5,8 @@
     "description": "C TWO Universal Queues will allow you to track all the value from your business processes composed of multiple technologies",
     "version": "1.0"
   },
-  "host": "",
-  "basePath": "",
+  "host": "demo2.rpasupervisor.com",
+  "basePath": "/Demo2/CTWO.Server/api/",
   "schemes": [
     "https"
   ],
@@ -243,8 +243,53 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "No Content"
+          "200": {
+            "description": "No Content",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "id"
+                },
+                "itemKey": {
+                  "type": "string",
+                  "description": "itemKey"
+                },
+                "created": {
+                  "type": "string",
+                  "description": "created"
+                },
+                "localCreated": {
+                  "type": "string",
+                  "description": "localCreated"
+                },
+                "queueId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "queueId"
+                },
+                "locked": {
+                  "type": "boolean",
+                  "description": "locked"
+                },
+                "test": {
+                  "type": "boolean",
+                  "description": "test"
+                },
+                "queueItemData": {
+                  "type": "object",
+                  "properties": {
+                    "itemData": {
+                      "type": "string",
+                      "description": "itemData"
+                    }
+                  },
+                  "description": "queueItemData"
+                }
+              }
+            }
           }
         },
         "description": "Lock next unlocked item from queue reference",
@@ -492,122 +537,60 @@
           "200": {
             "description": "Success",
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "integer",
-                    "format": "int32",
-                    "description": "id"
-                  },
-                  "itemKey": {
-                    "type": "string",
-                    "description": "itemKey"
-                  },
-                  "attempts": {
-                    "type": "integer",
-                    "format": "int32",
-                    "description": "attempts"
-                  },
-                  "queue": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "integer",
-                        "format": "int32",
-                        "description": "id"
-                      },
-                      "name": {
-                        "type": "string",
-                        "description": "name"
-                      }
-                    },
-                    "description": "queue"
-                  },
-                  "state": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "integer",
-                        "format": "int32",
-                        "description": "id"
-                      },
-                      "name": {
-                        "type": "string",
-                        "description": "name"
-                      },
-                      "state": {
-                        "type": "integer",
-                        "format": "int32",
-                        "description": "state"
-                      }
-                    },
-                    "description": "state"
-                  },
-                  "created": {
-                    "type": "string",
-                    "description": "created"
-                  },
-                  "concluded": {
-                    "type": "string",
-                    "description": "concluded"
-                  },
-                  "defer": {
-                    "type": "string",
-                    "description": "defer"
-                  },
-                  "tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "integer",
-                          "format": "int32",
-                          "description": "id"
-                        },
-                        "name": {
-                          "type": "string",
-                          "description": "name"
-                        }
-                      }
-                    },
-                    "description": "tags"
-                  },
-                  "itemData": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "integer",
-                          "format": "int32",
-                          "description": "id"
-                        },
-                        "itemData": {
-                          "type": "object",
-                          "properties": {
-                            "key": {
-                              "type": "string",
-                              "description": "key"
-                            }
-                          },
-                          "description": "itemData"
-                        }
-                      }
-                    },
-                    "description": "itemData"
-                  },
-                  "attachments": {
-                    "type": "array",
-                    "items": {},
-                    "description": "attachments"
-                  },
-                  "locked": {
-                    "type": "boolean",
-                    "description": "locked"
-                  }
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "id"
+                },
+                "itemKey": {
+                  "type": "string",
+                  "description": "itemKey"
+                },
+                "attempts": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "attempts"
+                },
+                "queue": {
+                  "type": "string",
+                  "description": "queue"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "state"
+                },
+                "created": {
+                  "type": "string",
+                  "description": "created"
+                },
+                "concluded": {
+                  "type": "string",
+                  "description": "concluded"
+                },
+                "defer": {
+                  "type": "string",
+                  "description": "defer"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {},
+                  "description": "tags"
+                },
+                "itemData": {
+                  "type": "array",
+                  "items": {},
+                  "description": "itemData"
+                },
+                "attachments": {
+                  "type": "array",
+                  "items": {},
+                  "description": "attachments"
+                },
+                "locked": {
+                  "type": "boolean",
+                  "description": "locked"
                 }
               }
             }
@@ -759,10 +742,6 @@
                   "type": "string",
                   "description": "itemKey"
                 },
-                "status": {
-                  "type": "string",
-                  "description": "status"
-                },
                 "created": {
                   "type": "string",
                   "description": "created"
@@ -770,19 +749,6 @@
                 "localCreated": {
                   "type": "string",
                   "description": "localCreated"
-                },
-                "createdByVendorSessionId": {
-                  "type": "integer",
-                  "format": "int32",
-                  "description": "createdByVendorSessionId"
-                },
-                "concluded": {
-                  "type": "string",
-                  "description": "concluded"
-                },
-                "localConcluded": {
-                  "type": "string",
-                  "description": "localConcluded"
                 },
                 "queueId": {
                   "type": "integer",
@@ -796,27 +762,6 @@
                 "localDeferredUntil": {
                   "type": "string",
                   "description": "localDeferredUntil"
-                },
-                "state": {
-                  "type": "integer",
-                  "format": "int32",
-                  "description": "state"
-                },
-                "workflowId": {
-                  "type": "string",
-                  "description": "workflowId"
-                },
-                "legacy": {
-                  "type": "boolean",
-                  "description": "legacy"
-                },
-                "locked": {
-                  "type": "boolean",
-                  "description": "locked"
-                },
-                "test": {
-                  "type": "boolean",
-                  "description": "test"
                 },
                 "queueItemData": {
                   "type": "object",
