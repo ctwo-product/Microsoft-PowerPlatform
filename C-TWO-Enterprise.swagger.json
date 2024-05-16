@@ -5,10 +5,10 @@
     "description": "C TWO connector to manage flows and unattended sessions from a single pane of glass",
     "version": "1.0"
   },
-  "host": "",
-  "basePath": "",
+  "host": "demo2.rpasupervisor.com",
+  "basePath": "/Demo2/CTWO.Server/api/",
   "schemes": [
-    "http"
+    "https"
   ],
   "consumes": [],
   "produces": [],
