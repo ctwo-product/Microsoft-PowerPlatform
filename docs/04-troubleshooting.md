@@ -14,7 +14,7 @@
 
 ## Getting help
 
-- **Knowledge base:** *(see your C TWO support portal)*
+- **Knowledge base:** [c-two.zendesk.com](https://c-two.zendesk.com/)
 - **Email:** [customersuccess@ctwo.com](mailto:customersuccess@ctwo.com)
 
 When contacting support, include: the operation name, the full request URL shown in **Peek code** (redact the token), the HTTP status/response, and your C TWO version.
