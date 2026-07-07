@@ -1,0 +1,2657 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "C TWO",
+    "contact": {
+      "name": "C TWO Support",
+      "url": "https://ctwo.com/",
+      "email": "customersuccess@ctwo.com"
+    },
+    "description": "C TWO is an Agentic Management Platform that orchestrates automation workflows, manages human-robot interactions, and processes work items through universal queues. Use this connector to trigger flows from C TWO sessions, manage session lifecycle, create and process queue items, and enable human-in-the-loop interactions with digital workers.",
+    "version": "2026.1"
+  },
+  "host": "connect24.ctwo.cloud",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/powerautomate/v1/actions/tasks": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "id"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "name"
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Waiting to connect",
+            "schema": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {}
+          }
+        },
+        "summary": "GetExposedFlows",
+        "description": "Retrieves the list of C TWO tasks that are configured and ready to be triggered. This internal operation is used to populate dynamic dropdowns in other actions.",
+        "operationId": "GetExposedFlows",
+        "parameters": [],
+        "x-ms-visibility": "internal"
+      }
+    },
+    "/trigger/powerautomate/v1/trigger/ConsumePendingSessions": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "sessions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "sessionId": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "sessionId"
+                      },
+                      "workflowTaskId": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "workflowTaskId"
+                      },
+                      "workflowName": {
+                        "type": "string",
+                        "description": "workflowName"
+                      },
+                      "taskName": {
+                        "type": "string",
+                        "description": "taskName"
+                      },
+                      "created": {
+                        "type": "string",
+                        "description": "created"
+                      },
+                      "processInputValues": {
+                        "type": "object",
+                        "description": "processInputValues",
+                        "additionalProperties": true
+                      }
+                    }
+                  },
+                  "description": "Set of sessions triggered by C TWO without timeout"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {}
+          }
+        },
+        "x-ms-trigger": "batch",
+        "summary": "Start Flow from Session Request without Timeout",
+        "operationId": "StartFlowWithoutTimeout",
+        "x-ms-trigger-metadata": {
+          "mode": "polling",
+          "kind": "query"
+        },
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "description": "Select the C TWO task that will trigger this flow. When a new session is created for this task in C TWO, the flow will start automatically without enforcing a timeout.",
+            "x-ms-summary": "Task ID",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "GetExposedFlows",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "x-ms-trigger-value": {
+              "value-collection": "sessions",
+              "value-path": "sessionId"
+            }
+          }
+        ],
+        "x-ms-trigger-hint": "Return json body",
+        "description": "Polls for new C TWO sessions and triggers the flow when a session is created for the selected task. Use this trigger when the automation does not require a timeout constraint. The flow receives session details including input values passed from C TWO."
+      }
+    },
+    "/trigger/powerautomate/v1/trigger/ConsumePendingSessionsWithRequiredTimeout": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "sessions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "sessionId": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "sessionId"
+                      },
+                      "workflowTaskId": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "workflowTaskId"
+                      },
+                      "workflowName": {
+                        "type": "string",
+                        "description": "workflowName"
+                      },
+                      "taskName": {
+                        "type": "string",
+                        "description": "taskName"
+                      },
+                      "created": {
+                        "type": "string",
+                        "description": "created"
+                      },
+                      "processInputValues": {
+                        "type": "object",
+                        "description": "processInputValues",
+                        "additionalProperties": true
+                      }
+                    }
+                  },
+                  "description": "Set of sessions triggered by C TWO with timeout"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {}
+          }
+        },
+        "x-ms-trigger": "batch",
+        "summary": "Start Flow from Session Request with Timeout",
+        "operationId": "StartFlowWithTimeout",
+        "x-ms-trigger-metadata": {
+          "mode": "polling",
+          "kind": "query"
+        },
+        "parameters": [
+          {
+            "name": "taskId",
+            "description": "Select the C TWO task that will trigger this flow. When a session is created for this task, the flow starts with the specified timeout enforced.",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "x-ms-summary": "Task ID",
+            "x-ms-visibility": "important",
+            "x-ms-dynamic-values": {
+              "operationId": "GetExposedFlows",
+              "value-path": "id",
+              "value-title": "name"
+            },
+            "x-ms-trigger-value": {
+              "value-collection": "sessions",
+              "value-path": "sessionId"
+            }
+          },
+          {
+            "name": "timeout",
+            "description": "Maximum time in seconds that the session is allowed to run before C TWO marks it as timed out.",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "x-ms-summary": "Seconds timeout",
+            "x-ms-visibility": "important"
+          }
+        ],
+        "x-ms-trigger-hint": "Return json body",
+        "description": "Polls for new C TWO sessions and triggers the flow with a timeout constraint. Use this trigger when the automation must complete within a specific time window. If the session exceeds the timeout, C TWO will handle it according to its timeout policy."
+      }
+    },
+    "/powerautomate/v1/actions/setsessioncompleted": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {}
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "summary": "Set Flow Execution State to Completed",
+        "operationId": "SetSessionCompleted",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "description": "The C TWO session ID to mark as successfully completed. Defaults to the session ID from the trigger output.",
+            "x-ms-summary": "Session ID",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "default": "@triggerOutputs()?['body/sessionId']"
+          }
+        ],
+        "description": "Marks a C TWO session as completed, signaling that the flow has finished its work successfully. Place this action at the end of your flow to report back to C TWO that the automation completed without errors.",
+        "x-ms-visibility": "advanced"
+      }
+    },
+    "/powerautomate/v1/actions/setsessionfailed": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {}
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "summary": "Set Flow Execution State to Failed",
+        "description": "Marks a C TWO session as failed, signaling that an error occurred during flow execution. Use this action in error-handling scopes to report failures back to C TWO with details about what went wrong.",
+        "operationId": "SetSessionFailed",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "description": "The C TWO session ID to mark as failed. Defaults to the session ID from the trigger output.",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Session ID",
+            "default": "@triggerOutputs()?['body/sessionId']"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "details": {
+                  "type": "string",
+                  "description": "A description of the error or exception that caused the session to fail.",
+                  "title": "details",
+                  "x-ms-visibility": "important"
+                }
+              },
+              "required": [
+                "details"
+              ],
+              "x-ms-visibility": "important"
+            },
+            "x-ms-visibility": "important"
+          }
+        ],
+        "x-ms-visibility": "advanced"
+      }
+    },
+    "/powerautomate/v1/actions/log": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {}
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {}
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "summary": "Add Log to Session",
+        "description": "Writes a log entry to a C TWO session. Use this action to track progress, record decisions, or log diagnostic information during flow execution. Logs are visible in the C TWO platform for auditing and troubleshooting.",
+        "operationId": "AddLogToSession",
+        "x-ms-visibility": "advanced",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "description": "The C TWO session ID where the log entry will be recorded. Defaults to the session ID from the trigger output.",
+            "x-ms-summary": "Session ID",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "default": "@triggerOutputs()?['body/sessionId']"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "level": {
+                  "type": "string",
+                  "description": "The severity level of the log entry.",
+                  "title": "",
+                  "enum": [
+                    "Trace",
+                    "Debug",
+                    "Information",
+                    "Warning",
+                    "Error",
+                    "Critical"
+                  ],
+                  "x-ms-visibility": "important"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "The log message content to record.",
+                  "title": ""
+                }
+              },
+              "required": [
+                "level",
+                "message"
+              ],
+              "x-ms-visibility": "important"
+            },
+            "x-ms-visibility": "important"
+          }
+        ]
+      }
+    },
+    "/powerautomate/v1/actions/settimeout": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {}
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "summary": "Set Session Timeout",
+        "description": "Updates the timeout value for an active C TWO session. Use this action to extend or reduce the allowed execution time for a running session when the original timeout needs adjustment.",
+        "operationId": "SetTimeout",
+        "x-ms-visibility": "advanced",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "description": "The C TWO session ID to update the timeout for. Defaults to the session ID from the trigger output.",
+            "x-ms-summary": "Session ID",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "default": "@triggerOutputs()?['body/sessionId']"
+          },
+          {
+            "name": "timeout",
+            "description": "The new timeout value in seconds to apply to the session.",
+            "x-ms-summary": "Timeout",
+            "in": "query",
+            "required": true,
+            "type": "integer",
+            "x-ms-visibility": "important"
+          }
+        ]
+      }
+    },
+    "/public/v2/sessions/isstoprequested/{sessionId}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "isStopRequested": {
+                  "type": "boolean",
+                  "description": "isStopRequested"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Session not found",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {}
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "summary": "Should Session Stop",
+        "operationId": "IsStopRequested",
+        "description": "Checks whether C TWO has requested a graceful (soft) stop for the given session. Use this action inside loops to periodically check if the session should terminate early, allowing the flow to clean up resources before stopping.",
+        "x-ms-visibility": "advanced",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "default": "@triggerOutputs()?['body/sessionId']",
+            "description": "The C TWO session ID to check for a stop request. Defaults to the session ID from the trigger output.",
+            "x-ms-summary": "Session ID",
+            "x-ms-url-encoding": "single"
+          }
+        ]
+      }
+    },
+    "/public/v2/robotToHumanHelpRequests/Create": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "id"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {}
+          }
+        },
+        "summary": "Create Form",
+        "description": "Creates a new robot interaction form that allows a digital worker to request human assistance. The form is presented to assigned users in the C TWO platform, enabling human-in-the-loop scenarios where human expertise is needed to handle exceptions or complex decisions.",
+        "operationId": "CreateForm",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "fields": {
+                  "type": "string",
+                  "description": "JSON-formatted string defining the form fields that the human user needs to fill in.",
+                  "title": "",
+                  "x-ms-visibility": "important"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "The title displayed to the human user when they open the form.",
+                  "title": "",
+                  "x-ms-visibility": "important"
+                },
+                "deadline": {
+                  "type": "string",
+                  "description": "The deadline by which the human must respond to the form (ISO 8601 format).",
+                  "title": "",
+                  "x-ms-visibility": "important",
+                  "format": "date-time"
+                },
+                "intro": {
+                  "type": "string",
+                  "description": "Introductory text shown to the human user explaining what action is needed.",
+                  "title": "",
+                  "x-ms-visibility": "important"
+                },
+                "itemId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The queue item ID associated with this form, linking the human interaction to a specific work item.",
+                  "title": "",
+                  "x-ms-visibility": "important"
+                },
+                "workflowTaskId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The C TWO task that created this form.",
+                  "title": "",
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetTasks",
+                    "value-path": "id",
+                    "value-title": "name"
+                  }
+                }
+              },
+              "x-ms-visibility": "important"
+            },
+            "x-ms-visibility": "important"
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/public/v2/robotToHumanHelpRequests/{formId}/assign": {
+      "patch": {
+        "responses": {
+          "204": {
+            "description": "Success",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {}
+          }
+        },
+        "summary": "Assign Form",
+        "description": "Assigns a robot interaction form to a specific user, making them responsible for reviewing and completing the human-in-the-loop request.",
+        "operationId": "AssignForm",
+        "parameters": [
+          {
+            "name": "formId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Form ID",
+            "description": "Human in the loop form id to assign.",
+            "x-ms-url-encoding": "single"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The ID of the user to assign the form to.",
+                  "title": "",
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetUsers",
+                    "value-path": "id",
+                    "value-title": "username"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/public/v2/robotToHumanHelpRequests/{formId}/unassign": {
+      "patch": {
+        "responses": {
+          "204": {
+            "description": "Success",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {}
+          }
+        },
+        "summary": "Unassign Form",
+        "description": "Removes the current user assignment from a robot interaction form, making it available for other users to claim.",
+        "operationId": "UnassignForm",
+        "parameters": [
+          {
+            "name": "formId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Form ID",
+            "description": "Human in the loop form id to unassign.",
+            "x-ms-url-encoding": "single"
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/public/v2/robotToHumanHelpRequests/{formId}/complete": {
+      "patch": {
+        "responses": {
+          "204": {
+            "description": "Success",
+            "schema": {}
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {}
+          }
+        },
+        "summary": "Complete Form",
+        "description": "Marks a robot interaction form as completed, signaling that the human user has provided the requested input and the digital worker can resume processing.",
+        "operationId": "CompleteForm",
+        "parameters": [
+          {
+            "name": "formId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "x-ms-summary": "Form ID",
+            "description": "Human in the loop form id to mark as completed.",
+            "x-ms-url-encoding": "single"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "completedAt": {
+                  "type": "string",
+                  "description": "The timestamp when the form was completed (ISO 8601 format).",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/public/v2/robotToHumanHelpRequests": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "id"
+                  },
+                  "divisionId": {
+                    "description": "divisionId"
+                  },
+                  "sessionId": {
+                    "description": "sessionId"
+                  },
+                  "queueItemId": {
+                    "description": "queueItemId"
+                  },
+                  "claimedByUserId": {
+                    "description": "claimedByUserId"
+                  },
+                  "claimedOn": {
+                    "type": "string",
+                    "description": "claimedOn",
+                    "x-nullable": true
+                  },
+                  "createdByWorkflowTaskId": {
+                    "description": "createdByWorkflowTaskId"
+                  },
+                  "createdByUserId": {
+                    "description": "createdByUserId"
+                  },
+                  "createdOn": {
+                    "type": "string",
+                    "description": "createdOn",
+                    "x-nullable": true
+                  },
+                  "deadline": {
+                    "type": "string",
+                    "description": "deadline",
+                    "x-nullable": true
+                  },
+                  "completed": {
+                    "type": "string",
+                    "description": "completed",
+                    "x-nullable": true
+                  },
+                  "undeferred": {
+                    "type": "boolean",
+                    "description": "undeferred"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {}
+          }
+        },
+        "summary": "Get Forms",
+        "description": "Retrieves a list of robot interaction forms with optional filtering. Use this action to query pending human-in-the-loop requests, check their status, or find forms assigned to specific users.",
+        "operationId": "GetForms",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "default": 0,
+            "x-ms-summary": "Skip",
+            "description": "Number of records to skip for pagination."
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "x-ms-summary": "Take",
+            "description": "Number of records to return."
+          },
+          {
+            "name": "deadlineBefore",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time",
+            "x-ms-summary": "Deadline Before",
+            "description": "Filter forms with a deadline before this date/time (ISO 8601)."
+          },
+          {
+            "name": "deadlineAfter",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "date-time",
+            "x-ms-summary": "Deadline After",
+            "description": "Filter forms with a deadline after this date/time (ISO 8601)."
+          },
+          {
+            "name": "includeCompleted",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "x-ms-summary": "Include Completed",
+            "description": "Whether to include completed forms in the results."
+          },
+          {
+            "name": "claimedByUserId",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "x-ms-summary": "Claimed By User ID",
+            "description": "Filter forms claimed by a specific user ID."
+          },
+          {
+            "name": "createdByWorkflowTaskId",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "x-ms-summary": "Created By Workflow Task ID",
+            "description": "Filter forms created by a specific workflow task ID."
+          }
+        ],
+        "x-ms-visibility": "advanced"
+      }
+    },
+    "/public/v2/workflowTasks": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "id"
+                  },
+                  "divisionId": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "divisionId"
+                  },
+                  "credentialId": {
+                    "type": "string",
+                    "description": "credentialId"
+                  },
+                  "credentialPoolId": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "credentialPoolId"
+                  },
+                  "workflowId": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "workflowId"
+                  },
+                  "responseTimeId": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "responseTimeId"
+                  },
+                  "operatingPeriodId": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "operatingPeriodId"
+                  },
+                  "processId": {
+                    "type": "string",
+                    "description": "processId"
+                  },
+                  "fileTriggerId": {
+                    "type": "string",
+                    "description": "fileTriggerId"
+                  },
+                  "manualTriggerId": {
+                    "type": "string",
+                    "description": "manualTriggerId"
+                  },
+                  "queueTriggerId": {
+                    "type": "string",
+                    "description": "queueTriggerId"
+                  },
+                  "sequenceTriggerId": {
+                    "type": "string",
+                    "description": "sequenceTriggerId"
+                  },
+                  "timeTriggerId": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "timeTriggerId"
+                  },
+                  "workflowTaskUnderperformanceProfileId": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "workflowTaskUnderperformanceProfileId"
+                  },
+                  "resourceGroupId": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "resourceGroupId"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "name"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "description"
+                  },
+                  "active": {
+                    "type": "boolean",
+                    "description": "active"
+                  },
+                  "maxConcurrentSessions": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "maxConcurrentSessions"
+                  },
+                  "sessionItemWorkTimePopulationUsed": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "sessionItemWorkTimePopulationUsed"
+                  },
+                  "sessionItemAttemptTimeAverage": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "sessionItemAttemptTimeAverage"
+                  },
+                  "sessionItemWorkTimeAverage": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "sessionItemWorkTimeAverage"
+                  },
+                  "sessionTimePopulationUsed": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "sessionTimePopulationUsed"
+                  },
+                  "sessionTimeBeforeWorkingItemsAverage": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "sessionTimeBeforeWorkingItemsAverage"
+                  },
+                  "sessionTimeAfterWorkingItemsAverage": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "sessionTimeAfterWorkingItemsAverage"
+                  },
+                  "sessionRunningTimeAverage": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "sessionRunningTimeAverage"
+                  },
+                  "sessionStoppingTimeAverage": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "sessionStoppingTimeAverage"
+                  },
+                  "workflowTaskTimingsCalculated": {
+                    "type": "string",
+                    "description": "workflowTaskTimingsCalculated"
+                  },
+                  "needUpdatedTimings": {
+                    "type": "boolean",
+                    "description": "needUpdatedTimings"
+                  },
+                  "credentialPolicy": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "credentialPolicy"
+                  },
+                  "linkedLabels": {
+                    "type": "array",
+                    "items": {},
+                    "description": "linkedLabels"
+                  },
+                  "linkedCustomFields": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "id"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "name"
+                        },
+                        "value": {
+                          "type": "string",
+                          "description": "value"
+                        }
+                      }
+                    },
+                    "description": "linkedCustomFields"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {}
+          }
+        },
+        "summary": "Get Tasks",
+        "description": "Retrieves the list of tasks configured in the C TWO platform. This internal operation is used to populate dynamic dropdowns for task selection in other actions.",
+        "operationId": "GetTasks",
+        "x-ms-visibility": "internal",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "default": 0
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "default": 200
+          }
+        ]
+      }
+    },
+    "/universalqueues/v2/items": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "The unique identifier of the queue item."
+                  },
+                  "itemKey": {
+                    "type": "string",
+                    "description": "The unique key of the queue item."
+                  },
+                  "attempts": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "The number of processing attempts."
+                  },
+                  "queueId": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "The identifier of the parent queue."
+                  },
+                  "state": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "The state identifier."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "The name of the state."
+                      },
+                      "state": {
+                        "type": "string",
+                        "description": "The state value."
+                      }
+                    },
+                    "description": "The current state of the queue item."
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The tags associated with the queue item."
+                  },
+                  "created": {
+                    "type": "string",
+                    "description": "The creation timestamp."
+                  },
+                  "createdByVendorSessionId": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "The session ID that created this item."
+                  },
+                  "concluded": {
+                    "type": "string",
+                    "description": "The conclusion timestamp."
+                  },
+                  "deferred": {
+                    "type": "string",
+                    "description": "The deferred timestamp."
+                  },
+                  "test": {
+                    "type": "boolean",
+                    "description": "Whether this is a test item."
+                  },
+                  "locked": {
+                    "type": "boolean",
+                    "description": "Whether the item is locked."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get Queue Items",
+        "description": "Retrieves queue items based on specified filter criteria such as state, tags, dates, and queue names. Use this action to search for and monitor work items across your universal queues.",
+        "operationId": "GetItems",
+        "parameters": [
+          {
+            "name": "itemKey",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Filter by item key.",
+            "x-ms-summary": "Item Key"
+          },
+          {
+            "name": "attempts",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "description": "Filter by number of attempts.",
+            "x-ms-summary": "Attempts"
+          },
+          {
+            "name": "deferredBefore",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Filter items deferred before this date.",
+            "x-ms-summary": "Deferred Before",
+            "format": "date-time"
+          },
+          {
+            "name": "deferredAfter",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Filter items deferred after this date.",
+            "x-ms-summary": "Deferred After",
+            "format": "date-time"
+          },
+          {
+            "name": "createdBefore",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Filter items created before this date.",
+            "x-ms-summary": "Created Before",
+            "format": "date-time"
+          },
+          {
+            "name": "createdAfter",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Filter items created after this date.",
+            "x-ms-summary": "Created After",
+            "format": "date-time"
+          },
+          {
+            "name": "concludedBefore",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Filter items concluded before this date.",
+            "x-ms-summary": "Concluded Before",
+            "format": "date-time"
+          },
+          {
+            "name": "concludedAfter",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Filter items concluded after this date.",
+            "x-ms-summary": "Concluded After",
+            "format": "date-time"
+          },
+          {
+            "name": "stateEnteredTimeBefore",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Filter items that entered state before this time.",
+            "x-ms-summary": "State Entered Before",
+            "format": "date-time"
+          },
+          {
+            "name": "stateEnteredTimeAfter",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Filter items that entered state after this time.",
+            "x-ms-summary": "State Entered After",
+            "format": "date-time"
+          },
+          {
+            "name": "states",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "PendingOrDeferred",
+              "Completed",
+              "Referred",
+              "SystemException",
+              "InProgress",
+              "BusinessException",
+              "Unknown"
+            ],
+            "description": "Filter by queue item state.",
+            "x-ms-summary": "States"
+          },
+          {
+            "name": "queueItemStateIds",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "description": "Filter by queue item state IDs.",
+            "x-ms-summary": "Queue Item State IDs"
+          },
+          {
+            "name": "queueItemStateNames",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Filter by queue item state names.",
+            "x-ms-summary": "Queue Item State Names"
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Filter by tags (comma-separated).",
+            "x-ms-summary": "Tags"
+          },
+          {
+            "name": "queueIds",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "description": "Filter by queue IDs.",
+            "x-ms-summary": "Queue IDs"
+          },
+          {
+            "name": "queueNames",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "description": "Filter by queue names (required).",
+            "x-ms-summary": "Queue Names"
+          },
+          {
+            "name": "references",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Filter by queue references.",
+            "x-ms-summary": "References"
+          },
+          {
+            "name": "includeItemData",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "default": true,
+            "enum": [
+              true,
+              false
+            ],
+            "description": "Whether to include item data in response.",
+            "x-ms-summary": "Include Item Data"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "description": "Number of records to skip for pagination.",
+            "x-ms-summary": "Skip"
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "description": "Number of records to return.",
+            "x-ms-summary": "Take"
+          }
+        ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "id"
+                },
+                "itemKey": {
+                  "type": "string",
+                  "description": "itemKey"
+                },
+                "attempts": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "attempts"
+                },
+                "queueId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "queueId"
+                },
+                "state": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "id"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "name"
+                    },
+                    "state": {
+                      "type": "string",
+                      "description": "state"
+                    }
+                  },
+                  "description": "state"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "tags"
+                },
+                "created": {
+                  "type": "string",
+                  "description": "created"
+                },
+                "createdByVendorSessionId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "createdByVendorSessionId"
+                },
+                "concluded": {
+                  "type": "string",
+                  "description": "concluded"
+                },
+                "deferred": {
+                  "type": "string",
+                  "description": "deferred"
+                },
+                "test": {
+                  "type": "boolean",
+                  "description": "test"
+                },
+                "locked": {
+                  "type": "boolean",
+                  "description": "locked"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "operationId": "CreateItem",
+        "summary": "Create Queue Item",
+        "description": "Creates a new work item in a specified universal queue. Use this action to add items for processing by digital workers, including data payloads, tags, and optional file attachments.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "The queue item details to create.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "itemKey": {
+                  "type": "string",
+                  "description": "A unique business key to identify this queue item (e.g., invoice number, case ID).",
+                  "title": "Item Key",
+                  "x-ms-visibility": "important"
+                },
+                "queueItemState": {
+                  "type": "string",
+                  "description": "The initial state of the queue item (e.g., Pending).",
+                  "title": "Queue Item State",
+                  "x-ms-visibility": "important"
+                },
+                "reference": {
+                  "type": "string",
+                  "description": "The queue reference where the item will be created.",
+                  "title": "Queue Reference",
+                  "x-ms-visibility": "important",
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetQueues",
+                    "value-path": "reference",
+                    "value-title": "name"
+                  }
+                },
+                "deferredUntil": {
+                  "type": "string",
+                  "description": "Defer processing until this date/time (ISO 8601 format).",
+                  "title": "Deferred Until",
+                  "format": "date-time"
+                },
+                "itemData": {
+                  "type": "object",
+                  "description": "The data payload for the queue item in JSON format.",
+                  "title": "Item Data"
+                },
+                "tags": {
+                  "type": "string",
+                  "description": "Tags for the queue item (comma-separated).",
+                  "title": "Tags"
+                },
+                "attachments": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "fileName": {
+                        "type": "string",
+                        "description": "The name of the attachment file."
+                      },
+                      "fileData": {
+                        "type": "string",
+                        "description": "The base64 encoded file data."
+                      }
+                    }
+                  },
+                  "description": "File attachments for the queue item.",
+                  "title": "Attachments"
+                },
+                "sessionId": {
+                  "type": "string",
+                  "description": "The session ID associated with this item.",
+                  "title": "Session ID"
+                },
+                "device": {
+                  "type": "string",
+                  "description": "The device that created this item.",
+                  "title": "Device"
+                },
+                "user": {
+                  "type": "string",
+                  "description": "The user who created this item.",
+                  "title": "User"
+                },
+                "automationProvider": {
+                  "type": "string",
+                  "description": "The automation provider for this item.",
+                  "title": "Automation Provider"
+                }
+              },
+              "required": [
+                "reference",
+                "queueItemState",
+                "itemKey"
+              ]
+            }
+          }
+        ],
+        "x-ms-visibility": "important"
+      }
+    },
+    "/universalqueues/v2/items/lock": {
+      "patch": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The unique identifier of the locked item."
+                },
+                "itemKey": {
+                  "type": "string",
+                  "description": "The unique key of the locked item."
+                },
+                "attempts": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The number of processing attempts."
+                },
+                "queueId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The identifier of the parent queue."
+                },
+                "state": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "The state identifier."
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "The name of the state."
+                    },
+                    "state": {
+                      "type": "string",
+                      "description": "The state value."
+                    }
+                  },
+                  "description": "The current state of the queue item."
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "The tags associated with the queue item."
+                },
+                "created": {
+                  "type": "string",
+                  "description": "The creation timestamp."
+                },
+                "createdByVendorSessionId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "The session ID that created this item."
+                },
+                "concluded": {
+                  "type": "string",
+                  "description": "The conclusion timestamp."
+                },
+                "deferred": {
+                  "type": "string",
+                  "description": "The deferred timestamp."
+                },
+                "test": {
+                  "type": "boolean",
+                  "description": "Whether this is a test item."
+                },
+                "locked": {
+                  "type": "boolean",
+                  "description": "Whether the item is locked."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "The lock request details.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "queueItemId": {
+                  "type": "string",
+                  "description": "The ID of the queue item to lock. If omitted, the next available item matching the filter will be locked.",
+                  "title": "Queue Item ID"
+                },
+                "reference": {
+                  "type": "string",
+                  "description": "The queue reference to lock an item from.",
+                  "title": "Queue Name",
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetQueues",
+                    "value-path": "reference",
+                    "value-title": "name"
+                  },
+                  "x-ms-visibility": "advanced"
+                },
+                "stateId": {
+                  "type": "string",
+                  "description": "The state ID to filter items.",
+                  "title": "State ID"
+                },
+                "stateName": {
+                  "type": "string",
+                  "description": "The state name to filter items by.",
+                  "title": "State Name"
+                },
+                "sessionId": {
+                  "type": "string",
+                  "description": "The session ID for this lock.",
+                  "title": "Session ID"
+                },
+                "device": {
+                  "type": "string",
+                  "description": "The device performing the lock.",
+                  "title": "Device",
+                  "x-ms-visibility": "internal"
+                },
+                "user": {
+                  "type": "string",
+                  "description": "The user performing the lock.",
+                  "title": "User",
+                  "x-ms-visibility": "internal"
+                },
+                "automationProvider": {
+                  "type": "string",
+                  "description": "The automation provider performing the lock.",
+                  "title": "Automation Provider",
+                  "x-ms-visibility": "internal"
+                },
+                "test": {
+                  "type": "boolean",
+                  "description": "Whether this is a test lock.",
+                  "title": "Test",
+                  "x-ms-visibility": "internal",
+                  "enum": [
+                    true,
+                    false
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "summary": "Lock Queue Item",
+        "description": "Locks a queue item to prevent other workers from processing it concurrently. Use this action before processing a work item to ensure exclusive access.",
+        "operationId": "LockItem"
+      }
+    },
+    "/universalqueues/v2/items/{queueItemId}/defer": {
+      "patch": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Defer Queue Item",
+        "description": "Defers a queue item so it will not be processed until the specified date/time. Use this action when an item cannot be processed now but should be retried later.",
+        "operationId": "DeferItem",
+        "parameters": [
+          {
+            "name": "queueItemId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The ID of the queue item to defer.",
+            "x-ms-summary": "Queue Item ID",
+            "x-ms-url-encoding": "single"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "The defer details.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "deferredUntil": {
+                  "type": "string",
+                  "description": "The date/time to defer until (ISO 8601 format).",
+                  "title": "Deferred Until",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/universalqueues/v2/items/{queueItemId}/data": {
+      "post": {
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Set Queue Item Data",
+        "description": "Updates the data content of a queue item. Use this action to modify the payload of a work item during processing, for example to store intermediate results.",
+        "operationId": "SetItemData",
+        "parameters": [
+          {
+            "name": "queueItemId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The ID of the queue item to update.",
+            "x-ms-summary": "Queue Item ID",
+            "x-ms-url-encoding": "single"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "The new data for the queue item.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "description": "The new data payload for the queue item, as a JSON object.",
+                  "title": "Data"
+                },
+                "created": {
+                  "type": "string",
+                  "description": "The creation timestamp for this data.",
+                  "title": "Created",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/universalqueues/v2/items/{queueItemId}/unlock": {
+      "patch": {
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Unlock Queue Item",
+        "description": "Unlocks a previously locked queue item and returns it to its available state. Use this action when processing is interrupted and the item should be released for other workers.",
+        "operationId": "UnlockItem",
+        "parameters": [
+          {
+            "name": "queueItemId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The ID of the queue item to unlock.",
+            "x-ms-summary": "Queue Item ID",
+            "x-ms-url-encoding": "single"
+          }
+        ]
+      }
+    },
+    "/universalqueues/v2/items/{queueItemId}/setstate": {
+      "post": {
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Set Queue Item State",
+        "description": "Changes the state of a queue item (e.g., from Pending to Completed, or to a custom state). Use this action to advance items through your workflow pipeline.",
+        "operationId": "SetItemState",
+        "parameters": [
+          {
+            "name": "queueItemId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The ID of the queue item to update.",
+            "x-ms-summary": "Queue Item ID",
+            "x-ms-url-encoding": "single"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "The new state information.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "state": {
+                  "type": "string",
+                  "description": "The new state for the queue item.",
+                  "title": "State"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/universalqueues/v2/items/{queueItemId}/retry": {
+      "patch": {
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Retry Queue Item",
+        "description": "Retry a specific queue item, setting its data back to its original value and creating a new Attempt.",
+        "operationId": "RetryItem",
+        "parameters": [
+          {
+            "name": "queueItemId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32",
+            "description": "Specific queue item id to retry.",
+            "x-ms-summary": "Queue Item ID",
+            "x-ms-url-encoding": "single"
+          },
+          {
+            "name": "stateId",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "description": "Specific pending queue item state id to be set; takes priority over state parameter.",
+            "x-ms-summary": "State ID"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Specific pending queue item state name to be set.",
+            "x-ms-summary": "State"
+          },
+          {
+            "name": "workflowTaskId",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "description": "WorkflowTask identifier.",
+            "x-ms-summary": "Workflow Task ID"
+          },
+          {
+            "name": "appId",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32",
+            "description": "App identifier.",
+            "x-ms-summary": "App ID"
+          }
+        ]
+      }
+    },
+    "/universalqueues/v2/items/{queueItemId}/log": {
+      "post": {
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Add Log to Queue Item",
+        "description": "Adds a log message to a queue item for audit trail and traceability. Use this action to record processing steps, warnings, or errors against a specific work item.",
+        "operationId": "AddItemLog",
+        "parameters": [
+          {
+            "name": "queueItemId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The ID of the queue item to log to.",
+            "x-ms-summary": "Queue Item ID",
+            "x-ms-url-encoding": "single"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "The log message details.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "level": {
+                  "type": "string",
+                  "description": "The severity level of the log entry.",
+                  "title": "Log Level",
+                  "enum": [
+                    "Information",
+                    "Warning",
+                    "Exception"
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "description": "The log message content.",
+                  "title": "Message"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/universalqueues/v2/items/{queueItemId}/tag": {
+      "delete": {
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Remove Tags from Queue Item",
+        "description": "Removes one or more tags from a queue item. Use this action to update the categorization of work items during processing.",
+        "operationId": "RemoveItemTag",
+        "parameters": [
+          {
+            "name": "queueItemId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The ID of the queue item to remove tags from.",
+            "x-ms-summary": "Queue Item ID",
+            "x-ms-url-encoding": "single"
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Comma-separated list of tags to remove.",
+            "x-ms-summary": "Tags"
+          }
+        ]
+      },
+      "patch": {
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Add Tags to Queue Item",
+        "description": "Adds one or more tags to a queue item for categorization and filtering. Tags help organize and search for work items across queues.",
+        "operationId": "AddItemTag",
+        "parameters": [
+          {
+            "name": "queueItemId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The ID of the queue item to add tags to.",
+            "x-ms-summary": "Queue Item ID",
+            "x-ms-url-encoding": "single"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "The tags to add.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "tags": {
+                  "type": "string",
+                  "description": "Comma-separated list of tags to add.",
+                  "title": "Tags"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "/universalqueues/v2/items/{queueItemId}/attachment/{attachmentId}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get Queue Item Attachment",
+        "description": "Retrieves a specific file attachment from a queue item as base64-encoded data. Use this action to download files that were attached to work items during creation or processing.",
+        "operationId": "GetItemAttachment",
+        "parameters": [
+          {
+            "name": "queueItemId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The ID of the queue item containing the attachment.",
+            "x-ms-summary": "Queue Item ID",
+            "x-ms-url-encoding": "single"
+          },
+          {
+            "name": "attachmentId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The ID of the attachment to retrieve.",
+            "x-ms-summary": "Attachment ID",
+            "x-ms-url-encoding": "single"
+          },
+          {
+            "name": "filename",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "The filename of the attachment.",
+            "x-ms-summary": "Filename"
+          }
+        ]
+      }
+    },
+    "/universalqueues/v2/states": {
+      "post": {
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Create Queue Item State",
+        "description": "Creates a new custom state within a specific queue. Custom states allow you to define workflow stages beyond the default states (Pending, Completed, Referred), tailoring the queue to your business process.",
+        "operationId": "CreateItemState",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "The state configuration details.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The name of the new state.",
+                  "title": "Name"
+                },
+                "responseTimeCalculationBasis": {
+                  "type": "string",
+                  "description": "Determines how response time SLAs are calculated for items entering this state.",
+                  "title": "Response Time Calculation",
+                  "enum": [
+                    "ItemStateEnterTime",
+                    "ItemCreationTime",
+                    "ItemDeferTimeWithEnterTimeFallback",
+                    "ItemDeferTimeWithCreationTimeFallback"
+                  ],
+                  "default": "ItemStateEnterTime"
+                },
+                "state": {
+                  "type": "string",
+                  "description": "The type of state (Pending, Completed, or Referred).",
+                  "title": "State Type",
+                  "enum": [
+                    "Pending",
+                    "Completed",
+                    "Referred"
+                  ]
+                },
+                "queueId": {
+                  "type": "integer",
+                  "description": "The ID of the queue where this state will be created.",
+                  "title": "Queue ID",
+                  "x-ms-dynamic-values": {
+                    "operationId": "GetQueues",
+                    "value-path": "id",
+                    "value-title": "name"
+                  },
+                  "format": "int32"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "A description of what this state represents in your workflow.",
+                  "title": "Description"
+                },
+                "timeSavedPerItem": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "Time saved per item in this state (seconds), used for ROI reporting.",
+                  "title": "Time Saved Per Item"
+                },
+                "valueGeneratedPerItem": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "Value generated per item in this state, used for ROI reporting.",
+                  "title": "Value Generated Per Item"
+                },
+                "includeInReports": {
+                  "type": "boolean",
+                  "description": "Whether to include this state in analytics and reports.",
+                  "title": "Include In Reports",
+                  "enum": [
+                    true,
+                    false
+                  ],
+                  "default": true
+                }
+              },
+              "required": [
+                "responseTimeCalculationBasis",
+                "queueId",
+                "state"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "/universalqueues/v2/queues": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "The unique identifier of the queue."
+                  },
+                  "deleted": {
+                    "type": "boolean",
+                    "description": "Whether the queue is deleted."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the queue."
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "The description of the queue."
+                  },
+                  "visible": {
+                    "type": "boolean",
+                    "description": "Whether the queue is visible."
+                  },
+                  "includeInReports": {
+                    "type": "boolean",
+                    "description": "Whether to include in reports."
+                  },
+                  "created": {
+                    "type": "string",
+                    "description": "The creation timestamp."
+                  },
+                  "updated": {
+                    "type": "string",
+                    "description": "The last update timestamp."
+                  },
+                  "deletedTime": {
+                    "type": "string",
+                    "description": "The deletion timestamp."
+                  },
+                  "divisionId": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "The division identifier."
+                  },
+                  "type": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "The queue type."
+                  },
+                  "reference": {
+                    "type": "string",
+                    "description": "The queue reference."
+                  },
+                  "states": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "The state identifier."
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "The state name."
+                        },
+                        "description": {
+                          "type": "string",
+                          "description": "The state description."
+                        },
+                        "tagfilter": {
+                          "type": "string",
+                          "description": "The tag filter for this state."
+                        },
+                        "state": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "The state type."
+                        },
+                        "timeSavedPerItem": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "Time saved per item."
+                        },
+                        "includeInReports": {
+                          "type": "boolean",
+                          "description": "Whether to include in reports."
+                        },
+                        "responseTimeCalculationBasis": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "Response time calculation basis."
+                        }
+                      }
+                    },
+                    "description": "The states available in this queue."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Get Queues",
+        "description": "Retrieves universal queues based on filter criteria. Use this action to list available queues, check their configuration, or look up queue details. This operation also powers dynamic dropdowns in other actions.",
+        "operationId": "GetQueues",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Filter by queue ID.",
+            "x-ms-summary": "Queue ID"
+          },
+          {
+            "name": "reference",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Filter by queue reference.",
+            "x-ms-summary": "Queue Reference"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Filter by queue name.",
+            "x-ms-summary": "Queue Name"
+          },
+          {
+            "name": "stateName",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Filter by state name.",
+            "x-ms-summary": "State Name"
+          },
+          {
+            "name": "deleted",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "description": "Filter by deleted status.",
+            "x-ms-summary": "Deleted"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "description": "Number of records to skip for pagination.",
+            "x-ms-summary": "Skip"
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "description": "Number of records to return.",
+            "x-ms-summary": "Take"
+          }
+        ]
+      }
+    },
+    "/public/v2/robotToHumanHelpRequests/{formId}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "id"
+                },
+                "divisionId": {
+                  "description": "divisionId"
+                },
+                "sessionId": {
+                  "description": "sessionId"
+                },
+                "queueItemId": {
+                  "description": "queueItemId"
+                },
+                "claimedByUserId": {
+                  "description": "claimedByUserId"
+                },
+                "claimedOn": {
+                  "type": "string",
+                  "description": "claimedOn",
+                  "x-nullable": true
+                },
+                "createdByWorkflowTaskId": {
+                  "description": "createdByWorkflowTaskId"
+                },
+                "createdByUserId": {
+                  "description": "createdByUserId"
+                },
+                "createdOn": {
+                  "type": "string",
+                  "description": "createdOn",
+                  "x-nullable": true
+                },
+                "deadline": {
+                  "type": "string",
+                  "description": "deadline",
+                  "x-nullable": true
+                },
+                "completed": {
+                  "type": "string",
+                  "description": "completed",
+                  "x-nullable": true
+                },
+                "title": {
+                  "type": "string",
+                  "description": "title"
+                },
+                "intro": {
+                  "type": "string",
+                  "description": "intro"
+                },
+                "fields": {
+                  "type": "string",
+                  "description": "fields"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {}
+          }
+        },
+        "summary": "Get Form By Id",
+        "description": "Retrieves a specific robot interaction form by its unique identifier. Use this action to fetch the details, fields, and current status of a human-in-the-loop form that was created by a digital worker.",
+        "operationId": "GetFormById",
+        "parameters": [
+          {
+            "name": "formId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Human in the loop form id to get details.",
+            "x-ms-summary": "Form ID",
+            "x-ms-url-encoding": "single"
+          }
+        ],
+        "x-ms-visibility": "advanced"
+      }
+    },
+    "/public/v2/users": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "id"
+                  },
+                  "username": {
+                    "type": "string",
+                    "description": "username"
+                  },
+                  "firstname": {
+                    "type": "string",
+                    "description": "firstname"
+                  },
+                  "lastname": {
+                    "type": "string",
+                    "description": "lastname"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "email"
+                  },
+                  "userAccountType": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "userAccountType"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {}
+          }
+        },
+        "summary": "GetUsers",
+        "description": "Returns filtered users and service accounts.",
+        "operationId": "GetUsers",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "default": 1000
+          }
+        ],
+        "x-ms-visibility": "internal"
+      }
+    }
+  },
+  "definitions": {},
+  "parameters": {},
+  "responses": {},
+  "security": [
+    {
+      "api_key": []
+    }
+  ],
+  "tags": [],
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization"
+    }
+  },
+  "x-ms-connector-metadata": [
+    {
+      "propertyName": "Website",
+      "propertyValue": "https://ctwo.com/"
+    },
+    {
+      "propertyName": "Privacy policy",
+      "propertyValue": "https://ctwo.com/privacy-policy/"
+    },
+    {
+      "propertyName": "Categories",
+      "propertyValue": "Business Intelligence;AI"
+    }
+  ]
+}
