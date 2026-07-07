@@ -73,7 +73,7 @@ Full list with methods and inputs: [docs/03-operations.md](docs/03-operations.md
 
 ## Support
 
-- **Knowledge base:** *(see your C TWO support portal)*
+- **Knowledge base:** [c-two.zendesk.com](https://c-two.zendesk.com/)
 - **Email:** [customersuccess@ctwo.com](mailto:customersuccess@ctwo.com)
 - **Website:** [ctwo.com](https://ctwo.com/) · [Privacy policy](https://ctwo.com/privacy-policy/) · [Terms](https://ctwo.com/terms-conditions/)
 
