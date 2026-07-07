@@ -1,0 +1,59 @@
+{
+  "properties": {
+    "connectionParameters": {
+      "ctwoHost": {
+        "type": "string",
+        "uiDefinition": {
+          "displayName": "C TWO Host",
+          "description": "Your C TWO server hostname only — no scheme, no trailing slash. For example connect24.ctwo.cloud, or an on-premises host with optional port such as ctwo.contoso.com:8443.",
+          "tooltip": "C TWO hostname only, e.g. connect24.ctwo.cloud",
+          "constraints": {
+            "tabIndex": 1,
+            "clearText": true,
+            "required": "true"
+          }
+        }
+      },
+      "ctwoBaseUrl": {
+        "type": "string",
+        "uiDefinition": {
+          "displayName": "C TWO Base URL",
+          "description": "The base path of your C TWO API including your division. Start with a slash, no trailing slash. For example /DEFAULT/CTWO.Server/api.",
+          "tooltip": "C TWO API base path, e.g. /DEFAULT/CTWO.Server/api",
+          "constraints": {
+            "tabIndex": 2,
+            "clearText": true,
+            "required": "true"
+          }
+        }
+      },
+      "api_key": {
+        "type": "securestring",
+        "uiDefinition": {
+          "displayName": "API Key",
+          "description": "Your C TWO API token, entered as: Bearer <your-token>. A Service Account token is recommended; a Personal Access Token also works.",
+          "tooltip": "Format: Bearer <your-token>. Service Account recommended; Personal Access Token also valid.",
+          "constraints": {
+            "tabIndex": 3,
+            "clearText": false,
+            "required": "true"
+          }
+        }
+      }
+    },
+    "iconBrandColor": "#E4F726",
+    "capabilities": [],
+    "publisher": "C TWO Automate AS",
+    "stackOwner": "C TWO Automate AS",
+    "policyTemplateInstances": [
+      {
+        "templateId": "dynamichosturl",
+        "title": "Set C TWO host and base URL from connection parameters",
+        "parameters": {
+          "x-ms-apimTemplateParameter.urlTemplate": "https://@connectionParameters('ctwoHost','connect24.ctwo.cloud')@connectionParameters('ctwoBaseUrl','/DEFAULT/CTWO.Server/api')",
+          "x-ms-apimTemplate-operationName": []
+        }
+      }
+    ]
+  }
+}
