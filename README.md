@@ -16,6 +16,7 @@ This repository contains everything you need to **install and configure** the co
 | [`solution/CTWO-Connector_unmanaged.zip`](solution/CTWO-Connector_unmanaged.zip) | The connector as an **unmanaged** solution — use this only if you want to **view or customize** the connector definition in your own environment. |
 | [`paconn/`](paconn/) | The raw connector source (`apiDefinition.swagger.json`, `apiProperties.json`, `icon.png`) for installing via the **Power Platform Connectors CLI (`paconn`)**. |
 | [`docs/`](docs/) | Detailed guides: [installation](docs/01-installation.md), [configuration](docs/02-configuration.md), [operations](docs/03-operations.md), [troubleshooting](docs/04-troubleshooting.md). |
+| [`power-automate-desktop/`](power-automate-desktop/) | **Power Automate *Desktop* orchestration** — a drop-in PowerShell script that lets C TWO trigger, monitor, and govern PAD flows on a runner machine (a different integration path from the connector). See its [README](power-automate-desktop/README.md). |
 
 **Managed vs. unmanaged:** if you just want to *use* the connector, import the **managed** solution — it installs cleanly and uninstalls cleanly. Choose the **unmanaged** solution only if you intend to modify the connector definition inside your environment. Don't import both into the same environment.
 
@@ -71,6 +72,14 @@ Add C TWO actions/triggers to your flows, apps, or Copilot Studio agents. See th
 - **Human‑in‑the‑loop** — create, assign, unassign, complete, and query structured human‑assistance forms.
 
 Full list with methods and inputs: [docs/03-operations.md](docs/03-operations.md).
+
+---
+
+## Power Automate Desktop
+
+The connector above covers **cloud** Power Platform (Power Automate Cloud, Power Apps, Logic Apps, Copilot Studio). To orchestrate **Power Automate *Desktop*** flows, C TWO uses a different mechanism — a drop-in PowerShell script on the runner machine that triggers PAD via its native CLI protocol and streams live telemetry back to C TWO. No connector, no changes to your flows.
+
+See [`power-automate-desktop/`](power-automate-desktop/) for the script, the one-time update-popup fix, and the full setup guide.
 
 ---
 
