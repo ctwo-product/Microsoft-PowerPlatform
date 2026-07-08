@@ -12,9 +12,12 @@ This repository contains everything you need to **install and configure** the co
 
 | Path | What it is |
 |---|---|
-| [`solution/CTWO-Connector_managed.zip`](solution/CTWO-Connector_managed.zip) | The connector packaged as a **managed Power Platform solution**. Import this — it's the easiest, recommended method and includes the connection parameters, host‑routing policy, and icon. |
+| [`solution/CTWO-Connector_managed.zip`](solution/CTWO-Connector_managed.zip) | The connector as a **managed** Power Platform solution — **recommended for simply using the connector**. Includes the connection parameters, host‑routing policy, and icon. |
+| [`solution/CTWO-Connector_unmanaged.zip`](solution/CTWO-Connector_unmanaged.zip) | The connector as an **unmanaged** solution — use this only if you want to **view or customize** the connector definition in your own environment. |
 | [`paconn/`](paconn/) | The raw connector source (`apiDefinition.swagger.json`, `apiProperties.json`, `icon.png`) for installing via the **Power Platform Connectors CLI (`paconn`)**. |
 | [`docs/`](docs/) | Detailed guides: [installation](docs/01-installation.md), [configuration](docs/02-configuration.md), [operations](docs/03-operations.md), [troubleshooting](docs/04-troubleshooting.md). |
+
+**Managed vs. unmanaged:** if you just want to *use* the connector, import the **managed** solution — it installs cleanly and uninstalls cleanly. Choose the **unmanaged** solution only if you intend to modify the connector definition inside your environment. Don't import both into the same environment.
 
 ---
 

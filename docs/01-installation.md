@@ -10,10 +10,16 @@ Both methods install the same connector, including its connection parameters (Ho
 
 ## Method A — Import the solution (recommended)
 
+Pick the solution variant that fits your needs:
+- **`solution/CTWO-Connector_managed.zip`** — **managed**; recommended for simply *using* the connector. Installs and uninstalls cleanly.
+- **`solution/CTWO-Connector_unmanaged.zip`** — **unmanaged**; only if you want to *view or customize* the connector definition in your environment.
+
+Import just one (don't import both into the same environment).
+
 1. Sign in to [make.powerautomate.com](https://make.powerautomate.com) (or [make.powerapps.com](https://make.powerapps.com)).
 2. Select the target **environment** (top‑right).
 3. In the left nav, choose **Solutions**.
-4. Click **Import solution** → **Browse** → select [`solution/CTWO-Connector_managed.zip`](../solution/CTWO-Connector_managed.zip).
+4. Click **Import solution** → **Browse** → select your chosen zip (managed for normal use, unmanaged to customize).
 5. Click **Next**, then **Import**. Wait for the import to complete (usually under a minute).
 6. The **C TWO** custom connector is now available in this environment. Continue to [Configuration](02-configuration.md).
 
