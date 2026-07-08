@@ -10,7 +10,7 @@ This is the **desktop** counterpart to the cloud integration. Where the [custom 
 
 | File | What it is |
 |---|---|
-| [`ctwo-pad-script.ps1`](ctwo-pad-script.ps1) | The drop-in PowerShell script C TWO runs to trigger a PAD flow, monitor it to completion, stream telemetry, and exit with a status code. Deploy as-is. |
+| [`ctwo-pad-script.ps1`](ctwo-pad-script.ps1) | The drop-in PowerShell script C TWO runs to trigger a PAD flow, monitor it to completion, and stream live telemetry — so C TWO can report a **Completed** or **Failed** session outcome. Deploy as-is. |
 | [`DisablePADUpdates.ps1`](DisablePADUpdates.ps1) | One-time helper (run as administrator) that disables PAD's update-notification popup — the most common cause of failed scheduled runs. See [Known Limitations](#10-known-limitations). |
 
 ---
@@ -76,7 +76,7 @@ PAD session logs, forwarded as Trace telemetry  (when -PadTrace is active)
 
 - The Machine Agent runs in **Session 0** (the system service session). The PAD script runs in **Session 1+** (the interactive desktop session). C TWO's auto-login mechanism establishes this session automatically.
 - Communication between the Machine Agent and the script happens over a **Windows Named Pipe**. Every JSON line the script writes to stdout is forwarded to the C TWO Session Monitoring Dashboard in real time.
-- Telemetry lines written to **stdout** must be valid JSON in the form `{"level":"...","message":"..."}`. (The script's final `[SUCCESS]`/`[FAILED]` line uses `Write-Host`, which goes to the host stream — not the JSON stdout stream — so it never corrupts telemetry.)
+- Telemetry lines written to **stdout** must be valid JSON in the form `{"level":"...","message":"..."}`. The Machine Agent parses this stream and, from it, C TWO determines the session outcome shown in the dashboard.
 
 ---
 
@@ -173,7 +173,7 @@ Pre-flight checks, in order:
 4. EnvironmentId is a valid GUID (not a placeholder)
 5. FlowId is a valid GUID (not a placeholder)
 
-Any failure logs a `Fatal`-level message and the script exits with code **2**. No flow trigger is attempted.
+Any failure logs a `Fatal`-level message and the run stops immediately — no flow trigger is attempted, and C TWO records the session as **Failed**.
 
 ### Step 3: Flow Trigger and Window Management
 
@@ -200,7 +200,7 @@ Waits up to **60 seconds** (or `TimeoutSeconds`, whichever is lower) for a new r
 
 The script records the PIDs of any pre-existing runner processes at startup and only considers **new** ones as belonging to this execution. `Invoke-DismissPADDialogs` continues running on every 1-second tick during this loop.
 
-When a runner is detected, the script calls `WaitForExit()`, blocking until the flow completes. If no runner is detected, the script logs a clear diagnostic error and exits with code **1**.
+When a runner is detected, the script calls `WaitForExit()`, blocking until the flow completes. If no runner is detected, the script logs a clear diagnostic error and the session is reported as **Failed**.
 
 ### Step 5: PAD Session Log Forwarding (`-PadTrace`)
 
@@ -212,9 +212,9 @@ C:\ProgramData\Microsoft\Power Automate\Logs\
 
 Each line is parsed and forwarded to C TWO as a `Trace`-level log entry. Because `Trace` entries are dropped unless `-PadTrace` is set, this per-line PAD content only reaches the dashboard when `-PadTrace` is active. (The wrapper `Information` lines — e.g. `=== PAD session logs ===` and `Forwarding N PAD log file(s)` — always appear.)
 
-### Step 6: Final Status and Exit Code
+### Step 6: Final Status
 
-Evaluates the runner result, the no-runner condition, and the timeout, emits the final telemetry line with total duration, writes a human-readable `[SUCCESS]` / `[FAILED]` / `[CONFIG ERROR]` status line, and **exits with a code** (`0`, `1`, or `2`). The Machine Agent uses the exit code for SLA tracking and automatic retries; the telemetry stream drives the dashboard view (see [Execution Outcomes](#9-execution-outcomes)).
+Evaluates the runner result, the no-runner condition, and the timeout, then emits the final telemetry line with total duration. From this, C TWO identifies the **session outcome** — **Completed** or **Failed** — which it records in the Session Monitoring Dashboard and uses to drive any response actions you have configured (see [Execution Outcomes](#9-execution-outcomes)).
 
 ---
 
@@ -354,7 +354,7 @@ The Machine Agent reads this stream via Named Pipe and forwards it to the C TWO 
 {"level":"Information","message":"PASS: FlowId GUID is valid"}
 {"level":"Information","message":"PAD.Console.Host launched (PID: 9332)"}
 {"level":"Information","message":"Runner process 'PAD.RobotV2' detected (PID: 11240) - waiting for it to finish..."}
-{"level":"Information","message":"Flow completed successfully in 47.2s - exit code 0"}
+{"level":"Information","message":"Flow completed successfully in 47.2s"}
 ```
 
 ### Log level reference
@@ -382,34 +382,22 @@ When `-PadTrace` is included, the script forwards PAD's internal session log fil
 
 ## 9. Execution Outcomes
 
-Every run signals its outcome in **two complementary ways**:
+At the end of every run, C TWO classifies the **session outcome** and records it in the Session Monitoring Dashboard. You then configure **response actions** against each outcome — retries, alerts, escalations, or downstream workflow steps — directly in C TWO, with no change to the script.
 
-1. **Exit code** — the script ends with `0`, `1`, or `2`. This is the authoritative signal the C TWO Machine Agent uses for SLA tracking and automatic retries.
-2. **Telemetry stream** — the structured JSON log lines, plus a final human-readable `[SUCCESS]` / `[FAILED]` / `[CONFIG ERROR]` status line, that let operators see exactly what happened in the Session Monitoring Dashboard.
-
-### Exit codes
-
-| Exit code | Outcome | Emitted status line | C TWO behaviour |
+| Session outcome | What it means | Telemetry signal | Response actions you can configure |
 |---|---|---|---|
-| `0` | **Success** — flow completed and the runner finished cleanly | `[SUCCESS] Flow completed successfully in Xs (exit 0)` | Session marked completed and logged in the audit trail |
-| `1` | **Flow failure** — timed out, the runner reported a failure, or no runner process was detected | `[FAILED] ... (exit 1)` | C TWO can retry per configured policy; alert raised if configured |
-| `2` | **Configuration error** — a pre-flight validation check failed or PAD could not be launched | `[CONFIG ERROR] ... (exit 2)` | C TWO does not auto-retry until the machine/configuration is corrected |
+| **Completed** | The PAD flow ran and the runner finished cleanly | Final `Information` line, e.g. `Flow completed successfully in 47.2s` | Continue the workflow; mark the session complete in the audit trail |
+| **Failed** | The flow timed out, the runner reported a failure, no runner was detected, or a pre-flight validation check failed | `Error`- or `Fatal`-level line, e.g. `Flow timed out after 150s` or `FAIL: PAD executable not found` | Automatic retry per policy; raise an alert; escalate to a fallback process |
 
-The telemetry signals that accompany each outcome:
+> C TWO decides whether to retry, alert, or escalate based on the session outcome and the policy you configure — you don't need to script any of that logic.
 
-| Outcome | Telemetry signal |
-|---|---|
-| **Success** | Final `Information` line, e.g. `Flow completed successfully in 47.2s - exit code 0` |
-| **Flow failure** | `Error`-level line, e.g. `Flow timed out after 150s` or `Flow did not start - no runner process was detected` |
-| **Configuration error** | `Fatal`-level line, e.g. `FAIL: PAD executable not found`, followed by `Validation failed` |
-
-### Common causes of a flow failure (exit 1)
+### Common causes of a failed run
 
 - Runner process never appeared within the detection window (wrong FlowId/EnvironmentId, PAD not signed in, or a blocking dialog prevented PAD from starting)
 - Runner reported a failure (flow execution error inside PAD)
 - Flow exceeded the `TimeoutSeconds` limit
 
-### Common causes of a configuration error (exit 2)
+### Common causes of a configuration failure (pre-flight check)
 
 - PAD executable not found at the configured path
 - UIFlowService stopped and did not recover within 30 seconds
@@ -506,13 +494,13 @@ Trigger the script manually from C TWO with valid GUIDs and `InputJson` set to `
 - All pre-flight checks show `PASS`
 - `PAD.Console.Host launched (PID: ...)` appears
 - Runner process is detected
-- The final result confirms the flow completed successfully (exit code 0)
+- The final result confirms the flow completed successfully (session outcome **Completed**)
 
 Add `-PadTrace` for the test run to capture full PAD internal logs and confirm the flow executed correctly end to end.
 
 ### Step 6: Schedule or connect to your workflow
 
-Attach the script to a C TWO schedule, event trigger, or multi-step workflow. Use the `InputJson` Variable to pass dynamic data at runtime. C TWO reads the exit code and telemetry stream to drive SLA tracking, alerts, and automatic retry logic.
+Attach the script to a C TWO schedule, event trigger, or multi-step workflow. Use the `InputJson` Variable to pass dynamic data at runtime. C TWO reads the session outcome and telemetry stream to drive SLA tracking, alerts, and automatic retry logic.
 
 ---
 
