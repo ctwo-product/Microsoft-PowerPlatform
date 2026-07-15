@@ -1,4 +1,4 @@
-# C TWO — Microsoft Power Platform Custom Connector
+# C TWO Microsoft Power Platform Custom Connector
 
 The **C TWO custom connector** lets Microsoft Power Platform — **Power Automate, Power Apps, Azure Logic Apps, and Copilot Studio** — connect to your C TWO environment. C TWO is an Agentic Management Platform that orchestrates automation workflows, manages human‑robot interactions, and processes work items through universal queues.
 
